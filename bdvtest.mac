@@ -29,7 +29,8 @@ init:   mov     #1000,sp        ; Setup stack
         mtps    #000340         ; Raise interrupt pri
         reset                   ; Reset the bus
 ;
-	mov	#000400,@pcrreg
+	mov	#000400,@pcrreg	; Select ROM page 0
+	mov	#16,@#ledreg	; Turn off LEDs 2, 3 and 4
 ;
 ; Clear the screen
 ;
