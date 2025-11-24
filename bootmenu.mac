@@ -37,7 +37,7 @@ e213	= 002000		; E21, switch 3 bit
 e214	= 004000		; E21, switch 4 bit
 	.radix	2
 swtbts	= 1111000000000000
-ltcbts	= 0000000011000000
+ltcbts	= 0000000001000000
 	.radix	8
 ; --------------------------------------------------
 ; RAM locations variables
@@ -87,7 +87,7 @@ domenu:	mov	#17.,r1		; Print 17 spaces
 	jsr	pc,prtspc
 	mov	#banner,r1	; Point to banner
 	jsr	pc,prtstr
-	mov	#26.,r1		; Print 26 spaces
+	mov	#25.,r1		; Print 25 spaces
 	jsr	pc,prtspc
 	mov	#verstr,r1	; Point to version
 	jsr	pc,prtstr
@@ -793,7 +793,7 @@ clrscn:	.ascii  <33>/[2J/<33>/[H/
 crlf:	.byte	12,15,0
 banner:	.ascii	'PDP-11/23 BOOT MENU'
 	.byte	0
-verstr:	.ascii	'v0.9'
+verstr:	.ascii	'v0.90'
 	.byte	12,15,0
 bywho:	.ascii	'2025-P. Ekstrom'
 	.byte	12,0

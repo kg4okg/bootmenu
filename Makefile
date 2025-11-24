@@ -1,4 +1,4 @@
-all:	bootmenu.bin bdvtest.bin
+all:	tools/tobin bootmenu.bin bdvtest.bin
 
 bootmenu.bin:	bootmenu.mac Makefile
 	./tools/macro11 -o bootmenu.obj -l bootmenu.lst bootmenu.mac
@@ -15,5 +15,8 @@ bdvtest.bin:	bdvtest.mac Makefile
 	./tools/genbin.sh bdvtest.obj > bdvtest.bin
 	./tools/bin2load -f bdvtest.bin -o bdvtest.bld -b 14000
 
+tools/tobin:	tools/tobin.c
+	gcc -o tools/tobin tools/tobin.c
+
 clean:
-	rm -f *.obj *.lst *.bin *.bld *.dmp *.evn *.odd *.hex *.log
+	rm -f *.obj *.lst *.bin *.bld *.dmp *.evn *.odd *.hex *.log tools/tobin
