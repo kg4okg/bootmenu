@@ -1,0 +1,88 @@
+	.asect
+	.=17300
+
+;
+; Console registers
+;
+conrxs  = 177560                ; Term in stat
+conrxb  = conrxs+2              ; Term in buff
+contxs  = conrxb+2              ; Term out stat
+contxb  = contxs+2              ; Term out buff
+;
+; BDV-11 registers and other information
+;
+pcrreg  = 177520                ; ROM page control register
+rwreg   = 177522                ; BDV-11 Read/Write Register
+swtreg  = 177524                ; BDV-11 switch/LED register
+ledreg  = 177524
+mmuctl  = 177572                ; MMU control register
+                                ; E15 1-8 = bits 0-7
+                                ; E21 1-4 = bits 8-11
+                                ; Switch on = 1, off = 0
+                                ; LEDs 1-4 = bits 0-3
+                                ; LED off=1, on=0
+;
+; Main entry point
+;
+init:   mov     #1000,sp        ; Setup stack
+        tst     -(sp)
+        mtps    #000340         ; Raise interrupt pri
+        reset                   ; Reset the bus
+;
+	mov	#000400,@pcrreg
+;
+; Clear the screen
+;
+        mov     #clrscn,r1
+        jsr     pc,prtstr
+
+	mov	#crlf,r1
+	jsr	pc,prtstr
+	mov	#strmsg,r1
+	jsr	pc,prtstr
+;
+	jsr	pc,getchr
+	halt
+	.word	0
+; --------------------------------------------------
+; Print string to console
+;
+; r1 - string pointer
+; --------------------------------------------------
+prtstr: movb    (r1)+,r0
+        cmp     r0,#0
+        beq     prtend
+        jsr     pc,prtchr       ; Print char
+        br      prtstr
+prtend: rts     pc
+; --------------------------------------------------
+; Print char to console
+;
+; r0 - char to print
+; --------------------------------------------------
+prtchr: movb    r0,@#contxb
+prtwt2: tstb    @#contxs
+        bpl     prtwt2
+        rts     pc
+; --------------------------------------------------
+; Get a char from console
+;
+; r0 - input character
+; --------------------------------------------------
+getchr: tstb    @#conrxs
+        bpl     getchr
+        movb    @#conrxb,r0
+        rts     pc
+; --------------------------------------------------
+;
+; String constants
+;
+; --------------------------------------------------
+clrscn: .ascii  <33>/[2J/<33>/[H/
+        .byte   0
+crlf:   .byte   12,15,0
+strmsg: .ascii  <33>/[2J/<33>/[H/
+        .ascii  'START? '
+        .byte   0,0
+
+	.end
