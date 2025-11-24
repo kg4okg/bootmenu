@@ -7,6 +7,7 @@
 ; --------------------------------------------------
 ;	.enabl	AMA
 	.asect
+romstr	= 14000
 ;
 conrxs  = 177560 		; Term in stat
 conrxb  = conrxs+2		; Term in buff
@@ -53,7 +54,7 @@ comm	=2406
 ; Main Program
 ; --------------------------------------------------
 ;
-	.=14000		; Load address
+	.=romstr		; Load address
 ;
 ; Main entry point
 ;
