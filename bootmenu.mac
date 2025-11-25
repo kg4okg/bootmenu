@@ -297,40 +297,51 @@ cpylp:  mov     (r4)+,(r5)+
         rts     pc
 ; --------------------------------------------------
 ; Initialize the LTC
-; --------------------------------------------------
-iniltc:	mov	@#4,r3		; Save timeout vector
-	mov	#1$,@#4		; Setup timout vector
-	tst	@ltcreg		; Access LTC register
-	mov	r3,@#4		; Restore timeout vector
-;
-	mov	@ltcvt,r3	; Save LTC vector
-	mov	#1,@ltcvt	; Setup our vector
-	mtps	#340		; Set PSW to priority 7
+iniltc:	mtps	#340		; Set PSW to priority 7
 	reset
-	mov	#ltcbit,@#ltcreg
-	bit	#ltcbit,@ltcreg	; Test bit 6 of LTC
-	bne	3$
+	mov	@#4,r3		; Save the vector
+	mov	#1$,@#4		; Setup our vector
+	tst	@#ltcreg
+	br	4$
 ;
-1$:	mov	#clkdis,r1
+1$:	br	2$
+;
+4$:	mov	@#lctvec,r3	; Save the vector
+	mov	#5$,@#lctvec	; Setup our vector
+	bit	#300,@#lctreg	; Test for LCT enabled bit
+	mov	#clkena,r1	; LTC enabled
 	jsr	pc,prtstr
-	br	2$
-3$:	mov	#clkena,r1
-	jsr	pc,prtstr
+	mov	r3,@#lctvec	; Restore the vector
+	br	3$
+;
+5$:	mov	r3,@#lctvec	; Restore the vector
+	br	3$
+;
 2$:	mov	r3,@#4		; Restore saved vector
-	rts	pc
+	mov	#clkdis,r1	; LTC disabled
+	jsr	pc,prtstr
+	br	3$
+;
+3$:	rts	pc
 ; --------------------------------------------------
 ; Initialize the BDV-11 board
 ; --------------------------------------------------
-inibdv:	mov	@#10,r3		; Save BDV vector
-	mov	@#20,r4
-	mov	#1$,@#10	; Setup our BDV vector
-	mov	#1$,@#20	; Setup our BDV vector
-	tst	@swtreg
-
-	mov	#swtbts,@swtreg	; Turn off all LEDs
-1$:	mov	r3,@#10		; Restore BDV vector
-	mov	r4,@#20
-2$:	rts	pc
+inibdv:	mov     @#2,r2		; Save vectors
+	mov	@#4,r3
+	mov     @#10,r4
+	mov     #1$,@#2		; Set our vector
+	mov     #1$,@#4
+	mov     #1$,@#10
+	mov     #400,@#pcrreg	; Set PCR to page 0
+	tst     @#swtreg	; Test access to switch register
+	clr     @#swtreg	; Turn on all LEDs
+	mov	#2.,r0		; Wait 2ms
+	mov     #17,@#swtreg	; Turn off all LEDs
+	mov	#2.,r0		; Wait 2ms
+1$:	mov     r2,@#2		; Restore vectors
+	mov	r3,@#3
+	mov     r4,@#10
+	rts	pc
 ; --------------------------------------------------
 ; Initialize memory
 ; --------------------------------------------------
@@ -840,6 +851,7 @@ mubmsg:	.byte	12,12,15
 xebmsg:	.byte	12,12,15
 	.ascii	'  Booting from XQ'
 	.byte	0
+	.even
 tstmem:	.ascii  <33>/[2J/<33>/[H/
 	.ascii	'TESTING MEMORY'
 	.byte	0,0
