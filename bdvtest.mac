@@ -1,3 +1,17 @@
+;--------------------------------------------------
+; This is code to test programming for the BDV11's
+; 265-byte ROM window. The original ROM files were
+; merged, then disassembled and analyzed to find
+; the technique used.
+;
+; The r5 register is used to hold the start address
+; for the window to be selected. While r4 holds the
+; ROM pages to be selected. Then the new location
+; is branched to.
+;
+; Tghe value in r4 is moved to the PCR register
+; and the value in r5 is moved to the PC.
+;--------------------------------------------------
 	.asect
 	.=17300
 
