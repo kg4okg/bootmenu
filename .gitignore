@@ -1,0 +1,9 @@
+*.bin
+*.bld
+*.dmp
+*.lst
+*.obj
+dumps/
+media/
+tools/tobin
+tools/dmp2bin
