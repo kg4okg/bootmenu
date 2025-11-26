@@ -805,7 +805,7 @@ clrscn:	.ascii  <33>/[2J/<33>/[H/
 crlf:	.byte	12,15,0
 banner:	.ascii	'PDP-11/23 BOOT MENU'
 	.byte	0
-verstr:	.ascii	'v0.90'
+verstr:	.ascii	'v0.96'
 	.byte	12,15,0
 bywho:	.ascii	'2025-P. Ekstrom'
 	.byte	12,0
